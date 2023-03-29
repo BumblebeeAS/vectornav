@@ -1,21 +1,21 @@
 <?xml version="1.0"?>
 <launch>
 	<group ns="auv4">
-		<arg name="frame_id" default="auv4/fog"/>
-		<node pkg="vectornav" type="vnpub" name="vectornav" output="screen" >
-			<param name="frame_id" value="$(arg frame_id)"/>
+		<arg name="frame_id" default="auv4/fog" />
+		<node pkg="vectornav" type="vnpub" name="vectornav" output="screen">
+			<param name="frame_id" value="$(arg frame_id)" />
 			<rosparam command="load" file="$(find vectornav)/params/vn100.yaml" />
 
-			<!-- The following topics are useful  -->
-			<remap from="vectornav/IMU" to="vnav/imu"/>
-			<remap from="vectornav/Mag" to="vnav/mag"/>
-			<remap from="vectornav/Pres" to="vnav/pressure"/>
+			<!-- The following topics are useful -->
+			<remap from="vectornav/IMU" to="vnav/imu" />
+			<remap from="vectornav/Mag" to="vnav/mag" />
+			<remap from="vectornav/Pres" to="vnav/pressure" />
 			<remap from="vectornav/Temp" to="vnav/temp" />
 
 			<!-- The following topics are not useful -->
-			<remap from="vectornav/GPS" to="vnav/_gps"/>
-			<remap from="vectornav/INS" to="vnav/_ins"/>
+			<remap from="vectornav/GPS" to="vnav/_gps" />
+			<remap from="vectornav/INS" to="vnav/_ins" />
 			<remap from="vectornav/Odom" to="vnav/_odom" />
-		</node>		
+		</node>
 	</group>
 </launch>
