@@ -1,5 +1,5 @@
 # Defined in udev rules, change according to your system. Typically /dev/ttyUSB0
-serial_port: /dev/ttyUSB0
+serial_port: /dev/vnav
 
 # Acceptable baud rates : 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600
 # Datasheet states 128000 works but from experiments it does not.
@@ -17,10 +17,10 @@ fixed_imu_rate: 800
 map_frame_id: map
 
 # Frame id of the sensor (used for header.frame_id of other messages and for Odom child_frame_id)
-frame_id: imu_link
+frame_id: fog # Because vectornav is at where fog is
 
 # Data publication form, true for East North Up or false for North East Down <- false is default setting
-tf_ned_to_enu: false
+tf_ned_to_enu: true
 
 # If publishing ENU, do we want to publish in the frame labeled on the device? Default is false.
 # If tf_ned_to_enu = true and frame_based_enu = false orientation is reported by: x->y y->x z->-z to rotate the quaternion
