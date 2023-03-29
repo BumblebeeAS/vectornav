@@ -8,7 +8,10 @@ using namespace frame_utils::coordinates;
 using namespace frame_utils::geometry;
 constexpr auto base_link_to_base_link_ned = make_rotation<FLU, FRD>(0, 0, 180).value();
 
-void transform(ros::Publisher& publisher, const sensor_msgs::Imu::ConstPtr& msg) {
+void transform(
+    ros::Publisher& ned_publisher, 
+    ros::Publisher& rpy_publisher, 
+    const sensor_msgs::Imu::ConstPtr& msg) {
     sensor_msgs::Imu ned_msg; 
 
     // Linear acceleration: swap axes
@@ -34,7 +37,17 @@ void transform(ros::Publisher& publisher, const sensor_msgs::Imu::ConstPtr& msg)
     ned_msg.orientation.y = ned_orientation.getY(); 
     ned_msg.orientation.z = ned_orientation.getZ(); 
 
-    publisher.publish(ned_msg);
+    ned_publisher.publish(ned_msg);
+
+    // Publish RPY
+    geometry_msgs::Vector3Stamped rpy_msg; 
+
+    // Angular velocity: swap axes
+    rpy_msg.vector.x = msg->angular_velocity.y; // Roll
+    rpy_msg.vector.y = msg->angular_velocity.x; // Pitch
+    rpy_msg.vector.z = msg->angular_velocity.z; // Yaw
+
+    rpy_publisher.publish(rpy_msg);
 }
 
 void to_rpy(ros::Publisher& publisher, const sensor_msgs::Imu::ConstPtr& msg) {
@@ -52,8 +65,8 @@ int main(int argc, char** argv) {
     ros::init(argc, argv, "vnav_ned");
     ros::NodeHandle n; 
 
-    ros::Publisher ned_pub = n.advertise<sensor_msgs::Imu>("vectornav/imu_ned", 10);
-    ros::Publisher rpy_pub = n.advertise<geometry_msgs::Vector3Stamped>("vectornav/debug/rpy", 10);
-    ros::Subscriber enu_sub = n.subscribe<sensor_msgs::Imu>("vectornav/imu", 1000, boost::bind(&transform, ned_pub, _1));
+    ros::Publisher ned_pub = n.advertise<sensor_msgs::Imu>("vnav/imu_ned", 10);
+    ros::Publisher rpy_pub = n.advertise<geometry_msgs::Vector3Stamped>("vnav/debug/rpy", 10);
+    ros::Subscriber enu_sub = n.subscribe<sensor_msgs::Imu>("vnav/imu", 1000, boost::bind(&transform, ned_pub, rpy_pub, _1));
     ros::spin(); 
 }

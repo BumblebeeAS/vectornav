@@ -17,5 +17,7 @@
 			<remap from="vectornav/INS" to="vnav/_ins" />
 			<remap from="vectornav/Odom" to="vnav/_odom" />
 		</node>
+
+		<node pkg="vectornav" type="vn_ned_pub" name="enu_to_ned" output="screen" />
 	</group>
 </launch>
