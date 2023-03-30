@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <launch>
 	<group ns="auv4">
-		<arg name="frame_id" default="auv4/fog" />
+		<arg name="frame_id" default="auv4/fog_ned" />
 		<node pkg="vectornav" type="vnpub" name="vectornav" output="screen">
 			<param name="frame_id" value="$(arg frame_id)" />
 			<rosparam command="load" file="$(find vectornav)/params/vn100.yaml" />
 
 			<!-- The following topics are useful -->
-			<remap from="vectornav/IMU" to="vnav/imu" />
+			<remap from="vectornav/IMU" to="vnav/imu_ned" />
 			<remap from="vectornav/Mag" to="vnav/mag" />
 			<remap from="vectornav/Pres" to="vnav/pressure" />
 			<remap from="vectornav/Temp" to="vnav/temp" />
@@ -18,6 +18,6 @@
 			<remap from="vectornav/Odom" to="vnav/_odom" />
 		</node>
 
-		<node pkg="vectornav" type="vn_ned_pub" name="enu_to_ned" output="screen" />
+		<!-- <node pkg="vectornav" type="vn_ned_pub" name="enu_to_ned" output="screen" /> -->
 	</group>
 </launch>
