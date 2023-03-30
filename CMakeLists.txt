@@ -10,7 +10,6 @@ project(vectornav VERSION 0.1.0)
 find_package(catkin REQUIRED COMPONENTS
     roscpp
     message_generation
-    frames
 )
 
 add_message_files(
@@ -29,7 +28,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES vectornav
-   CATKIN_DEPENDS roscpp sensor_msgs geometry_msgs
+   CATKIN_DEPENDS roscpp sensor_msgs
 #  DEPENDS system_lib
 )
 
@@ -61,9 +60,3 @@ install(TARGETS vnpub
    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
    RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
-
-## Add ENU -> NED republisher
-add_executable(vn_ned_pub src/ned_publisher.cpp)
-target_link_libraries(vn_ned_pub ${catkin_LIBRARIES})
-
-# add_dependencies(vn_ned_pub ${PROJECT_NAME}_generate_messages)
