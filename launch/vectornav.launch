@@ -18,6 +18,10 @@
 			<remap from="vectornav/Odom" to="vnav/_odom" />
 		</node>
 
+		<node pkg="sparton_imu" type="q2euler" name="navrpy_vnav_bcast" output="screen">
+			<param name="imu_topic" type="str" value="vnav/imu_ned" />
+		</node>
+
 		<!-- <node pkg="vectornav" type="vn_ned_pub" name="enu_to_ned" output="screen" /> -->
 	</group>
 </launch>
