@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 	<group ns="auv4">
-		<arg name="frame_id" default="auv4/fog_ned" />
+		<arg name="frame_id" default="auv4/vnav_ned" />
 		<node pkg="vectornav" type="vnpub" name="vectornav" output="screen">
 			<param name="frame_id" value="$(arg frame_id)" />
 			<rosparam command="load" file="$(find vectornav)/params/vn100.yaml" />
