@@ -31,9 +31,9 @@ frame_based_enu: false
 # Make sure all covariances below are of type xx.xx , i.e. double so that the rpc is parsed correctly
 
 # Linear Acceleration Covariances not produced by the sensor
-linear_accel_covariance: [0.01,  0.0,    0.0,
-                          0.0,   0.01,   0.0,
-                          0.0,   0.0,    0.01]
+linear_accel_covariance: [1.,  0.0,    0.0,
+                          0.0,   1.,   0.0,
+                          0.0,   0.0,    1.]
 
 # Angular Velocity Covariances not produced by the sensor
 angular_vel_covariance: [0.01,  0.0,   0.0,
