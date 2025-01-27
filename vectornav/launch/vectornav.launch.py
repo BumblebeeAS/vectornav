@@ -2,7 +2,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch.actions import GroupAction
+from launch_ros.actions import Node, PushRosNamespace
 
 
 def generate_launch_description():
@@ -14,14 +15,14 @@ def generate_launch_description():
         package="vectornav",
         executable="vectornav",
         output="screen",
-        parameters=[os.path.join(this_dir, "config", "vn_100_auv4.yaml")],
+        parameters=[os.path.join(this_dir, "config", "auv4", "vectornav.yaml")],
     )
 
     start_vectornav_sensor_msgs_cmd = Node(
         package="vectornav",
         executable="vn_sensor_msgs",
         output="screen",
-        parameters=[os.path.join(this_dir, "config", "vn_100_auv4.yaml")],
+        parameters=[os.path.join(this_dir, "config", "auv4", "vectornav.yaml")],
     )
 
     # Create the launch description and populate
