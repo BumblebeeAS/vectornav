@@ -7,6 +7,19 @@ It has been entirely redesigned from the ROS1 package to provide a good basis to
 without requiring modification of the node itself. The majority of the device configuration settings are 
 exposed as ROS2 parameters that can be modified from a launch file. 
 
+## For AUV4 Testing
+
+Try this first:
+
+```bash
+ros2 launch vectornav auv4_vectornav_composable.launch.py
+```
+
+To run without composable nodes:
+
+```bash
+ros2 launch vectornav auv4_vectornav.launch.py
+```
 
 ## QuickStart
 
