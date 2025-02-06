@@ -57,7 +57,7 @@ auv4/vectornav:
       attitudeField: 0x0000          # ATTITUDEGROUP_NONE
       insField: 0x0000               # INSGROUP_NONE
       gps2Field: 0x0000              # GPSGROUP_NONE
-    frame_id: "fog_ned" # Because vectornav is at where fog is
+    frame_id: "auv4/vnav_ned"
 
 auv4/vn_sensor_msgs:
   ros__parameters:
