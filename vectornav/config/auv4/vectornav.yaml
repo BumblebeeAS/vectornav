@@ -61,7 +61,7 @@ auv4/vectornav:
 
 auv4/vn_sensor_msgs:
   ros__parameters:
-    use_enu: true
+    use_enu: false
     orientation_covariance: [0.01,  0.0,   0.0,
                             0.0,   0.01,  0.0,
                             0.0,   0.0,   0.01]

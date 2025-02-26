@@ -195,7 +195,7 @@ void VnSensorMsgs::sub_vn_common(const vectornav_msgs::msg::CommonGroup::SharedP
       // Quaternion ENU -> NED
       tf2::Quaternion q, q_ned2enu;
       fromMsg(msg_in->quaternion, q);
-      q_ned2enu.setRPY(M_PI, 0.0, -M_PI / 2);
+      q_ned2enu.setRPY(0.0, 0.0, -M_PI / 2);
       msg.orientation = toMsg(q_ned2enu * q);
     }
 
