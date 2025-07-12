@@ -310,11 +310,12 @@ void Vectornav::execute_cal(const std::shared_ptr<MagCalGH> goal_handle)
   // Set VPE basic control to absolute
   vn::sensors::VpeBasicControlRegister vpeControl = {
     vn::protocol::uart::VpeEnable::VPEENABLE_ENABLE,
-    vn::protocol::uart::HeadingMode::HEADINGMODE_ABSOLUTE,
+    vn::protocol::uart::HeadingMode::HEADINGMODE_RELATIVE,
     vn::protocol::uart::VpeMode::VPEMODE_MODE1,  // By default these seem to be mode 1 not off
     vn::protocol::uart::VpeMode::VPEMODE_MODE1   // By default these seem to be mode 1 not off
   };
   vs_->writeVpeBasicControl(vpeControl);
+  RCLCPP_INFO(get_logger(), "VPE Basic Control set to RELATIVE mode");
 
   // make sure HSI mode is now set to run as reset returns to the previous state
   magControl.hsiMode = vn::protocol::uart::HsiMode::HSIMODE_RUN;
