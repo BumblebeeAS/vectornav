@@ -205,10 +205,6 @@ void VnSensorMsgs::sub_vn_common(const vectornav_msgs::msg::CommonGroup::SharedP
       "linear_acceleration_covariance", msg.linear_acceleration_covariance);
 
     pub_imu_->publish(msg);
-    RCLCPP_INFO(
-      get_logger(), "Orientation: x=%f, y=%f, z=%f, w=%f",
-      msg.orientation.x, msg.orientation.y, msg.orientation.z, msg.orientation.w
-    );
   }
 
   // IMU (Uncompensated)
