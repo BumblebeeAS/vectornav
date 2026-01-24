@@ -1,4 +1,4 @@
-use_enu: false
+use_enu: true # Convert VN data to ENU frame for robot localization
 orientation_covariance: [0.01,  0.0,   0.0,
                         0.0,   0.01,  0.0,
                         0.0,   0.0,   0.01]
@@ -12,3 +12,34 @@ linear_acceleration_covariance: [1.0,  0.0,   0.0,
 magnetic_covariance: [0.01,  0.0,   0.0,
                      0.0,   0.01,  0.0,
                      0.0,   0.0,   0.01]
+
+# TO TEST ENU FRAME AND COVARIANCES
+
+# use_enu: true
+
+# # VN-100 Covariances based on datasheet specs for UKF fusion
+# # Orientation: VPE quaternion accuracy (underwater, no mag aiding)
+# #   Roll/Pitch: ~0.1° RMS → (0.1 * π/180)² = 3e-6 rad²
+# #   Yaw: ~1° drift without mag → (1 * π/180)² = 3e-4 rad²
+# orientation_covariance: [3.0e-6,  0.0,     0.0,
+#                          0.0,     3.0e-6,  0.0,
+#                          0.0,     0.0,     3.0e-4]
+
+# # Angular velocity: Gyro noise 0.0035°/s/√Hz @ 100Hz
+# #   (0.0035 * π/180)² * 100 = 3.7e-7 rad²/s² → rounded to 1e-6
+# angular_velocity_covariance: [1.0e-6,  0.0,    0.0,
+#                               0.0,     1.0e-6, 0.0,
+#                               0.0,     0.0,    1.0e-6]
+
+# # Linear acceleration: Accel noise 0.14mg/√Hz @ 100Hz
+# #   (0.00137 m/s²)² * 100 = 1.88e-4 m²/s⁴ → rounded to 2e-4
+# linear_acceleration_covariance: [2.0e-4,  0.0,    0.0,
+#                                  0.0,     2.0e-4, 0.0,
+#                                  0.0,     0.0,    2.0e-4]
+
+# # Magnetometer: Typical hard-iron error ~0.3mG → (3e-7 T)² = 9e-14
+# #   Conservative estimate for underwater disturbances
+# magnetic_covariance: [1.0e-7,  0.0,    0.0,
+#                       0.0,     1.0e-7, 0.0,
+#                       0.0,     0.0,    1.0e-7]
+

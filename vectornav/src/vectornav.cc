@@ -1197,12 +1197,8 @@ void Vectornav::parseInsGroup(
     msg.magecef = toMsg(compositeData.magneticEcef());
   }
 
-  if (compositeData.hasMagneticEcef()) {
-    msg.accelecef = toMsg(compositeData.magneticEcef());
-  }
-
   if (compositeData.hasAccelerationEcef()) {
-    msg.linearaccelecef = toMsg(compositeData.accelerationEcef());
+    msg.accelecef = toMsg(compositeData.accelerationEcef());
   }
 
   if (compositeData.hasAccelerationLinearEcef()) {

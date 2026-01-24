@@ -118,7 +118,12 @@ static void convert_to_enu(
     msg_out.linear_acceleration.z = -msg_in->imu_accel.z;
   }
 
-  msg_out.orientation = msg_in->quaternion;
+  // NED to ENU quaternion conversion (direct closed-form)
+  // Rotation matrix R = [0 1 0; 1 0 0; 0 0 -1]
+  // Quaternion transform: q_ENU = [w, y, x, -z] from q_NED = [w, x, y, z]
+  msg_out.orientation.w = msg_in->quaternion.w;
+  msg_out.orientation.x = msg_in->quaternion.y;
+  msg_out.orientation.y = msg_in->quaternion.x;
   msg_out.orientation.z = -msg_in->quaternion.z;
 }
 
@@ -189,14 +194,10 @@ void VnSensorMsgs::sub_vn_common(const vectornav_msgs::msg::CommonGroup::SharedP
     if (use_enu) {
       convert_to_enu(msg_in, msg);
     } else {
+      // Keep data in NED frame
       msg.angular_velocity = msg_in->angularrate;
       msg.linear_acceleration = msg_in->accel;
-
-      // Quaternion ENU -> NED
-      tf2::Quaternion q, q_ned2enu;
-      fromMsg(msg_in->quaternion, q);
-      q_ned2enu.setRPY(0.0, 0.0, -M_PI / 2);
-      msg.orientation = toMsg(q_ned2enu * q);
+      msg.orientation = msg_in->quaternion;
     }
 
     fill_covariance_from_param("orientation_covariance", msg.orientation_covariance);
@@ -230,7 +231,15 @@ void VnSensorMsgs::sub_vn_common(const vectornav_msgs::msg::CommonGroup::SharedP
   {
     sensor_msgs::msg::MagneticField msg;
     msg.header = msg_in->header;
-    msg.magnetic_field = msg_in->magpres_mag;
+    
+    if (use_enu) {
+      // NED to ENU conversion for magnetic field
+      msg.magnetic_field.x = msg_in->magpres_mag.y;
+      msg.magnetic_field.y = msg_in->magpres_mag.x;
+      msg.magnetic_field.z = -msg_in->magpres_mag.z;
+    } else {
+      msg.magnetic_field = msg_in->magpres_mag;
+    }
 
     fill_covariance_from_param("magnetic_covariance", msg.magnetic_field_covariance);
 
@@ -304,7 +313,10 @@ void VnSensorMsgs::sub_vn_common(const vectornav_msgs::msg::CommonGroup::SharedP
     msg.pose.pose.position = ins_posecef_;
 
     if (use_enu) {
-      msg.pose.pose.orientation = msg_in->quaternion;
+      // NED to ENU quaternion conversion (direct closed-form)
+      msg.pose.pose.orientation.w = msg_in->quaternion.w;
+      msg.pose.pose.orientation.x = msg_in->quaternion.y;
+      msg.pose.pose.orientation.y = msg_in->quaternion.x;
       msg.pose.pose.orientation.z = -msg_in->quaternion.z;
     } else {
       // Converts Quaternion in ENU to ECEF
@@ -384,14 +396,14 @@ void VnSensorMsgs::fill_covariance_from_param(
   switch (length) {
     case 1:
       array[0] = covariance[0];
-      array[3] = covariance[0];
+      array[4] = covariance[0];
       array[8] = covariance[0];
       break;
 
     case 3:
       array[0] = covariance[0];
-      array[3] = covariance[1];
-      array[8] = covariance[3];
+      array[4] = covariance[1];
+      array[8] = covariance[2];
       break;
 
     case 9:
