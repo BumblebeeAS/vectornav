@@ -88,6 +88,14 @@ Vectornav::Vectornav(const rclcpp::NodeOptions & options) : Node("vectornav", op
   declare_parameter<int>("spiChecksum", vn::protocol::uart::ChecksumMode::CHECKSUMMODE_OFF);
   declare_parameter<int>("errorMode", vn::protocol::uart::ErrorMode::ERRORMODE_SEND);
 
+  // Sensor Configuration Parameters
+  declare_parameter<bool>("enable_gravity_removal", false);
+  declare_parameter<bool>("enable_imu_filtering", false);
+  declare_parameter<int>("mag_window_size", 4);
+  declare_parameter<int>("accel_window_size", 4);
+  declare_parameter<int>("gyro_window_size", 4);
+  declare_parameter<bool>("enable_velocity_aiding", false);
+
   // Binary Output Register 1
   // 5.2.11
   declare_parameter<int>("BO1.asyncMode", vn::protocol::uart::AsyncMode::ASYNCMODE_BOTH);
@@ -622,6 +630,73 @@ bool Vectornav::configure_sensor()
     (vn::protocol::uart::ErrorMode)get_parameter("errorMode").as_int()};
 
   vs_->writeCommunicationProtocolControl(configComm);
+
+  // ========================================================================
+  // SENSOR CONFIGURATION - Before Binary Output configuration
+  // ========================================================================
+  
+  try {
+    // 1. Disable Internal Velocity Aiding (if requested)
+    bool enable_velocity_aiding = get_parameter("enable_velocity_aiding").as_bool();
+    
+    if (!enable_velocity_aiding) {
+      vn::sensors::VelocityCompensationControlRegister velCompControl;
+      velCompControl.mode = vn::protocol::uart::VELOCITYCOMPENSATIONMODE_DISABLED;
+      velCompControl.velocityTuning = 0.0f;
+      velCompControl.rateTuning = 0.0f;
+      vs_->writeVelocityCompensationControl(velCompControl, true);
+      RCLCPP_INFO(get_logger(), "Velocity aiding disabled");
+    }
+
+    // 2. Gravity Removal and IMU Filtering Configuration
+    auto imuFilterConfig = vs_->readImuFilteringConfiguration();
+    
+    bool enable_gravity_removal = get_parameter("enable_gravity_removal").as_bool();
+    
+    if (enable_gravity_removal) {
+      // Use compensated mode to get linear acceleration (gravity removed)
+      imuFilterConfig.accelFilterMode = vn::protocol::uart::FILTERMODE_ONLYCOMPENSATED;
+      RCLCPP_INFO(get_logger(), "Gravity removal enabled (does not compensate for lever-arm)");
+    } else {
+      imuFilterConfig.accelFilterMode = vn::protocol::uart::FILTERMODE_BOTH;
+    }
+
+    // 3. Enable IMU Output Filtering
+    bool enable_imu_filtering = get_parameter("enable_imu_filtering").as_bool();
+    
+    if (enable_imu_filtering) {
+      int mag_window = get_parameter("mag_window_size").as_int();
+      int accel_window = get_parameter("accel_window_size").as_int();
+      int gyro_window = get_parameter("gyro_window_size").as_int();
+      
+      imuFilterConfig.magWindowSize = mag_window;
+      imuFilterConfig.accelWindowSize = accel_window;
+      imuFilterConfig.gyroWindowSize = gyro_window;
+      imuFilterConfig.tempWindowSize = 4;
+      imuFilterConfig.presWindowSize = 4;
+      imuFilterConfig.magFilterMode = vn::protocol::uart::FILTERMODE_BOTH;
+      // accelFilterMode already set above based on gravity removal
+      if (!enable_gravity_removal) {
+        imuFilterConfig.accelFilterMode = vn::protocol::uart::FILTERMODE_BOTH;
+      }
+      imuFilterConfig.gyroFilterMode = vn::protocol::uart::FILTERMODE_BOTH;
+      imuFilterConfig.tempFilterMode = vn::protocol::uart::FILTERMODE_BOTH;
+      imuFilterConfig.presFilterMode = vn::protocol::uart::FILTERMODE_BOTH;
+      
+      RCLCPP_INFO(get_logger(), "IMU filtering enabled (mag:%d, accel:%d, gyro:%d)", 
+                  mag_window, accel_window, gyro_window);
+    }
+    
+    vs_->writeImuFilteringConfiguration(imuFilterConfig, true);
+
+  } catch (std::exception & e) {
+    RCLCPP_ERROR(get_logger(), "Failed to configure sensor: %s", e.what());
+    return false;
+  }
+
+  // ========================================================================
+  // BINARY OUTPUT REGISTER CONFIGURATION
+  // ========================================================================
 
   auto boRegs = std::vector<std::string>{"BO1", "BO2", "BO3"};
   auto boConfigs = std::vector<vn::sensors::BinaryOutputRegister>();

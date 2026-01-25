@@ -1,11 +1,15 @@
 port: "/dev/vnav"
 baud: 115200
 reconnect_ms: 500
+
 # Reference vnproglib-1.2.0.0 headers for enum definitions
+
 # Async Output Type (ASCII)
 AsyncDataOutputType: 0           # VNOFF
+
 # Async output Frequency (Hz)
 AsyncDataOutputFrequency: 20
+
 # Sync control
 syncInMode: 3                    # SYNCINMODE_COUNT
 syncInEdge: 0                    # SYNCINEDGE_RISING
@@ -14,6 +18,7 @@ syncOutMode: 0                   # SYNCOUTMODE_NONE
 syncOutPolarity: 0               # SYNCOUTPOLARITY_NEGATIVE
 syncOutSkipFactor: 0
 syncOutPulseWidth_ns: 100000000
+
 # Communication protocol control
 serialCount: 0                   # COUNTMODE_NONE
 serialStatus: 0                  # STATUSMODE_OFF
@@ -22,6 +27,21 @@ spiStatus: 0                     # STATUSMODE_OFF
 serialChecksum: 1                # CHECKSUMMODE_CHECKSUM
 spiChecksum: 0                   # CHECKSUMMODE_OFF
 errorMode: 1                     # ERRORMODE_SEND
+
+# Sensor Configuration
+# Gravity removal (removes gravity from linear acceleration, does NOT compensate for lever-arm effects)
+enable_gravity_removal: false
+
+# IMU output filtering (uniformly-weighted moving window (boxcar) FIR filter) 
+# In other words, low-pass filtering on sensor outputs
+enable_imu_filtering: false
+mag_window_size: 4
+accel_window_size: 4
+gyro_window_size: 4
+
+# Velocity aiding (set to false to disable internal velocity estimation)
+enable_velocity_aiding: false
+
 # Binary output register 1
 BO1:
   asyncMode: 3                   # ASYNCMODE_BOTH
@@ -33,6 +53,7 @@ BO1:
   attitudeField: 0x0000          # ATTITUDEGROUP_NONE
   # set insField directly in source to enforce or condition
   gps2Field: 0x0000              # GPSGROUP_NONE
+
 # Binary output register 2
 BO2:
   asyncMode: 0                   # ASYNCMODE_NONE
@@ -44,6 +65,7 @@ BO2:
   attitudeField: 0x0000          # ATTITUDEGROUP_NONE
   insField: 0x0000               # INSGROUP_NONE
   gps2Field: 0x0000              # GPSGROUP_NONE
+
 # Binary output register 3
 BO3:
   asyncMode: 0                   # ASYNCMODE_NONE
@@ -55,4 +77,5 @@ BO3:
   attitudeField: 0x0000          # ATTITUDEGROUP_NONE
   insField: 0x0000               # INSGROUP_NONE
   gps2Field: 0x0000              # GPSGROUP_NONE
+
 frame_id: "auv4/vnav_ned"
