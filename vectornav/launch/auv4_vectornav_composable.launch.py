@@ -22,7 +22,7 @@ def generate_launch_description():
     group_action = GroupAction(
         actions=[
             PushRosNamespace("auv4"),
-            SetRemap(src="vectornav/imu", dst="vnav/imu_ned"),
+            SetRemap(src="vectornav/imu", dst="vnav/imu"),
             SetRemap(src="vectornav/magnetic", dst="vnav/mag"),
             SetRemap(src="vectornav/pressure", dst="vnav/pressure"),
             SetRemap(src="vectornav/temperature", dst="vnav/temp"),
